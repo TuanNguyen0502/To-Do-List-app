@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class TaskServiceImpl implements ITaskService {
     private final TaskRepository taskRepository;
 
     @Override
-    public PageResponse getAllTasks(String title, ETaskStatus status, int page, int size, String sortBy) {
+    public PageResponse getAllTasks(String title, ETaskStatus status, int page, int size) {
         Specification<Task> spec = (_, _, cb) -> cb.conjunction();
         if (title != null && !title.isBlank()) {
             spec = spec.and(TaskSpecification.titleContains(title));
@@ -34,8 +33,7 @@ public class TaskServiceImpl implements ITaskService {
             spec = spec.and(TaskSpecification.statusEquals(status));
         }
 
-        Sort sort = Sort.by(Sort.Direction.fromString("DESC"), sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size);
         Page<TaskResponse> taskResponses = taskRepository.findAll(spec, pageable)
                 .map(this::toTaskResponse);
         return toPageResponse(taskResponses);

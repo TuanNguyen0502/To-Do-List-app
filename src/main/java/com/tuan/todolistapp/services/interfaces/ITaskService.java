@@ -6,7 +6,7 @@ import com.tuan.todolistapp.dtos.responses.PageResponse;
 import com.tuan.todolistapp.models.enums.ETaskStatus;
 
 public interface ITaskService {
-    PageResponse getAllTasks(String title, ETaskStatus status, int page, int size, String sortBy);
+    PageResponse getAllTasks(String title, ETaskStatus status, int page, int size);
 
     void createTask(TaskCreateRequest request);
 

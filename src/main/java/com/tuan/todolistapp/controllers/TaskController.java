@@ -20,9 +20,8 @@ public class TaskController {
     public ResponseEntity<PageResponse> getAllTasks(@RequestParam(required = false) String title,
                                                     @RequestParam(required = false) ETaskStatus status,
                                                     @RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "10") int size,
-                                                    @RequestParam(defaultValue = "updatedAt") String sortBy) {
-        return ResponseEntity.ok(taskService.getAllTasks(title, status, page, size, sortBy));
+                                                    @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(taskService.getAllTasks(title, status, page, size));
     }
 
     @PostMapping("")
