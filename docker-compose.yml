@@ -1,0 +1,44 @@
+services:
+  # Tên dịch vụ phải trùng với HOST trong chuỗi kết nối (mysql)
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-todo
+    environment:
+      MYSQL_ROOT_PASSWORD: "rootpassword"
+      MYSQL_DATABASE: "todo-app"
+      MYSQL_USER: "myuser"
+      MYSQL_PASSWORD: "123456"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - todo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: spring-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # Sử dụng tên dịch vụ 'mysql' làm host kết nối
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/todo-app?autoReconnect=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=123456
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
